@@ -1,0 +1,158 @@
+﻿
+<!DOCTYPE html>
+<html>
+
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta property="og:site_name" content="Some Web Media"/>
+    <meta property="og:title" content="HC Off-canvas Nav – jQuery plugin for creating toggled off-canvas multi-level navigations">
+    <meta property="og:description" content="jQuery plugin for creating toggled off-canvas multi-level navigations, allowing endless nesting of submenu elements.">
+    <meta property="og:url" content="https://somewebmedia.github.io/hc-offcanvas-nav/">
+    <meta property="og:image" content="https://somewebmedia.github.io/hc-offcanvas-nav/hc-offcanvas-nav.png">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:200,300,400,600,700">
+    <link rel="stylesheet" href="docs/demo.css?ver=3.4.0">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="docs/hc-offcanvas-nav.js?ver=3.4.1"></script>
+  </head>
+
+  <body>
+
+    <div id="container">
+
+      <header>
+
+        <div class="wrapper cf">
+
+          <nav id="main-nav">
+
+            <ul class="first-nav">
+              <li class="search">
+                <div class="form-container">
+                  <form class="search-form" action="https://www.google.com/search" target="_blank" method="get">
+                    <input type="text" name="q" placeholder="Search..." autocomplete="off">
+                  </form>
+                </div>
+              </li>
+              
+            </ul>
+
+            
+                 
+                  
+                  <ul>
+              <li class="email">
+                <a href="eyosias.wubshet@gmail.com" target="_blank">
+                  </ul>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                </a>
+              </li>
+              
+            </ul>
+
+          </nav>
+
+          
+
+          <a class="toggle">
+            <span></span>
+            Menu
+          </a>
+
+        </div>
+
+      </header>
+
+
+
+      <script>
+        (function($) {
+          var $main_nav = $('#main-nav');
+          var $toggle = $('.toggle');
+
+          var defaultData = {
+            maxWidth: false,
+            customToggle: $toggle,
+            navTitle: 'All Categories',
+            levelTitles: true,
+            pushContent: '#container',
+            insertClose: 2,
+            closeLevels: false
+          };
+
+          // add new items to original nav
+          $main_nav.find('li.add').children('a').on('click', function() {
+            var $this = $(this);
+            var $li = $this.parent();
+            var items = eval('(' + $this.attr('data-add') + ')');
+
+            $li.before('<li class="new"><a>'+items[0]+'</a></li>');
+
+            items.shift();
+
+            if (!items.length) {
+              $li.remove();
+            }
+            else {
+              $this.attr('data-add', JSON.stringify(items));
+            }
+
+            Nav.update(true);
+          });
+
+          // call our plugin
+          var Nav = $main_nav.hcOffcanvasNav(defaultData);
+
+          // demo settings update
+
+          const update = (settings) => {
+            if (Nav.isOpen()) {
+              Nav.on('close.once', function() {
+                Nav.update(settings);
+                Nav.open();
+              });
+
+              Nav.close();
+            }
+            else {
+              Nav.update(settings);
+            }
+          };
+
+          $('.actions').find('a').on('click', function(e) {
+            e.preventDefault();
+
+            var $this = $(this).addClass('active');
+            var $siblings = $this.parent().siblings().children('a').removeClass('active');
+            var settings = eval('(' + $this.data('demo') + ')');
+
+            update(settings);
+          });
+
+          $('.actions').find('input').on('change', function() {
+            var $this = $(this);
+            var settings = eval('(' + $this.data('demo') + ')');
+
+            if ($this.is(':checked')) {
+              update(settings);
+            }
+            else {
+              var removeData = {};
+              $.each(settings, function(index, value) {
+                removeData[index] = false;
+              });
+
+              update(removeData);
+            }
+          });
+        })(jQuery);
+      </script>
+
+    </div>
+
+  </body>
+</html>
